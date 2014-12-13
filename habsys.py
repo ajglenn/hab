@@ -150,6 +150,7 @@ class AdminSocket(threading.Thread):
 
 	def run(self):
 		global stop
+		stopKey = "stop"
 
 		serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		serversocket.bind(("localhost", 1421))
@@ -159,11 +160,11 @@ class AdminSocket(threading.Thread):
 		while True:
 			(clientsocket, address) = serversocket.accept()
 
-			chunk = clientsocket.recv(4)
+			chunk = clientsocket.recv(len(stopKey))
 
 			writeToLog(chunk)
 
-			if chunk == "stop":
+			if chunk == stopKey:
 				stopLock.acquire()
 				stop = True
 				stopLock.release()
